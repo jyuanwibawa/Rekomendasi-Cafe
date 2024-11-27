@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\Cafe;
 use App\Models\Mood;
 use App\Models\Agenda;
@@ -13,8 +12,8 @@ class CafeController extends Controller
 {
     public function index()
     {
-        // Mengambil semua data cafe
-        $cafes = Cafe::all();
+        // Mengambil semua data cafe dengan relasi
+        $cafes = Cafe::with(['mood', 'agenda'])->get();
         return view('admin.cafe.index', compact('cafes'));
     }
 
@@ -26,94 +25,133 @@ class CafeController extends Controller
         return view('admin.cafe.create', compact('moods', 'agendas'));
     }
 
-    public function store(Request $request)
-    {
-        // Validasi input dari form
-        $validated = $request->validate([
-            'nama_cafe' => 'required|string|max:255',
-            'foto_cafe' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'alamat' => 'required',
-            'range_harga' => 'required',
-            'jam_buka' => 'required',
-            'jam_tutup' => 'required',
-            'kecepatan_wifi' => 'required|integer',
-            'kategori_cafe' => 'required|in:agenda,mood',
-            'nama_kategori' => 'required',
-        ]);
-
-        // Cek apakah kategori yang dipilih valid
-        if ($request->kategori_cafe === 'mood') {
-            $exists = Mood::where('nama_kategori_mood', $request->nama_kategori)->exists();
-        } elseif ($request->kategori_cafe === 'agenda') {
-            $exists = Agenda::where('nama_kategori_agenda', $request->nama_kategori)->exists();
-        } else {
-            $exists = false;
-        }
-
-        if (!$exists) {
-            return back()->withErrors(['nama_kategori' => 'Nama kategori tidak valid untuk kategori yang dipilih.']);
-        }
-
-        // Simpan foto cafe ke folder 'public/cafe'
-        $fotoPath = $request->file('foto_cafe')
-            ? $request->file('foto_cafe')->store('cafe', 'public')
-            : null;
-
-        // Menambahkan data cafe ke database
-        Cafe::create(array_merge($validated, ['foto_cafe' => $fotoPath]));
-
-        return redirect()->route('admin.cafes.index')->with('success', 'Cafe berhasil ditambahkan');
-    }
-
+    
     public function edit(Cafe $cafe)
     {
-        // Mengambil data mood dan agenda untuk form edit cafe
         $moods = Mood::all();
         $agendas = Agenda::all();
         return view('admin.cafe.edit', compact('cafe', 'moods', 'agendas'));
     }
 
+   
+    public function store(Request $request)
+    {
+        // Validasi
+        $request->validate([
+            'nama_cafe' => 'required|string|max:255',
+            'foto_cafe' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'alamat' => 'required|string|max:255',
+            'range_harga' => 'required|string|max:100',
+            'jam_buka' => 'required',
+            'jam_tutup' => 'required',
+            'kecepatan_wifi' => 'required|numeric',
+            'kategori_cafe' => 'required|string|in:mood,agenda',
+            'nama_kategori' => 'nullable|string',
+        ]);
+    
+        // Menangani input kategori dan menyimpan ID mood atau agenda
+        $id_mood = null;
+        $id_agenda = null;
+        
+        if ($request->kategori_cafe === 'mood') {
+            $mood = Mood::where('nama_kategori_mood', $request->nama_kategori)->first();
+            $id_mood = $mood ? $mood->id_mood : null;
+        } elseif ($request->kategori_cafe === 'agenda') {
+            $agenda = Agenda::where('nama_kategori_agenda', $request->nama_kategori)->first();
+            $id_agenda = $agenda ? $agenda->id_agenda : null;
+        }
+    
+        // Menyimpan cafe
+        $cafe = new Cafe();
+        $cafe->nama_cafe = $request->nama_cafe;
+        $cafe->foto_cafe = $request->file('foto_cafe') ? $request->file('foto_cafe')->store('cafes', 'public') : null;
+        $cafe->alamat = $request->alamat;
+        $cafe->range_harga = $request->range_harga;
+        $cafe->jam_buka = $request->jam_buka;
+        $cafe->jam_tutup = $request->jam_tutup;
+        $cafe->kecepatan_wifi = $request->kecepatan_wifi;
+        $cafe->kategori_cafe = $request->kategori_cafe;
+        $cafe->nama_kategori = $request->nama_kategori;
+        $cafe->id_mood = $id_mood;
+        $cafe->id_agenda = $id_agenda;
+        $cafe->save();
+    
+        return redirect()->route('admin.cafes.index')->with('success', 'Cafe berhasil ditambahkan!');
+    }
+    
     public function update(Request $request, Cafe $cafe)
     {
-        // Validasi input dari form
         $validated = $request->validate([
             'nama_cafe' => 'required|string|max:255',
             'foto_cafe' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'alamat' => 'required',
-            'range_harga' => 'required',
+            'alamat' => 'required|string',
+            'range_harga' => 'required|string',
             'jam_buka' => 'required',
             'jam_tutup' => 'required',
             'kecepatan_wifi' => 'required|integer',
-            'kategori_cafe' => 'required|in:agenda,mood',
-            'nama_kategori' => 'required',
+            'nama_kategori' => 'nullable|string',
         ]);
-
-        // Jika ada gambar baru, hapus gambar lama (jika ada)
-        if ($request->file('foto_cafe') && $cafe->foto_cafe) {
-            Storage::disk('public')->delete($cafe->foto_cafe);
+    
+        // Menentukan id_mood atau id_agenda
+        $id_kategori = null;
+        if ($request->kategori_cafe === 'mood') {
+            $id_kategori = Mood::where('nama_kategori_mood', $request->nama_kategori)->first()->id_mood ?? null;
+        } elseif ($request->kategori_cafe === 'agenda') {
+            $id_kategori = Agenda::where('nama_kategori_agenda', $request->nama_kategori)->first()->id_agenda ?? null;
         }
-
-        // Simpan foto cafe baru atau gunakan foto lama
-        $fotoPath = $request->file('foto_cafe')
-            ? $request->file('foto_cafe')->store('cafe', 'public')
-            : $cafe->foto_cafe;
-
+    
+        // Update foto jika ada
+        $validated['foto_cafe'] = $this->updateImage($request, 'foto_cafe', 'cafe', $cafe->foto_cafe);
+    
         // Update data cafe
-        $cafe->update(array_merge($validated, ['foto_cafe' => $fotoPath]));
-
-        return redirect()->route('admin.cafes.index')->with('success', 'Cafe berhasil diperbarui');
+        $cafe->update($validated);
+    
+        // Update kategori
+        $cafe->id_mood = $request->kategori_cafe === 'mood' ? $id_kategori : null;
+        $cafe->id_agenda = $request->kategori_cafe === 'agenda' ? $id_kategori : null;
+        $cafe->save();
+    
+        return redirect()->route('admin.cafes.index')->with('success', 'Cafe berhasil diperbarui.');
     }
-
+    
     public function destroy(Cafe $cafe)
     {
-        // Hapus foto cafe jika ada
-        if ($cafe->foto_cafe) {
-            Storage::disk('public')->delete($cafe->foto_cafe);
-        }
+        // Hapus foto jika ada
+        $this->deleteImage($cafe->foto_cafe);
 
-        // Hapus data cafe dari database
+        // Hapus data cafe
         $cafe->delete();
 
-        return redirect()->route('admin.cafes.index')->with('success', 'Cafe berhasil dihapus');
+        return redirect()->route('admin.cafes.index')->with('success', 'Cafe berhasil dihapus.');
+    }
+
+    /**
+     * Simpan gambar ke storage.
+     */
+    private function storeImage(Request $request, $fieldName, $folder)
+    {
+        return $request->file($fieldName) ? $request->file($fieldName)->store($folder, 'public') : null;
+    }
+
+    /**
+     * Update gambar di storage.
+     */
+    private function updateImage(Request $request, $fieldName, $folder, $oldPath = null)
+    {
+        if ($request->file($fieldName)) {
+            $this->deleteImage($oldPath);
+            return $this->storeImage($request, $fieldName, $folder);
+        }
+        return $oldPath;
+    }
+
+    /**
+     * Hapus gambar dari storage.
+     */
+    private function deleteImage($path)
+    {
+        if ($path) {
+            Storage::disk('public')->delete($path);
+        }
     }
 }

@@ -9,9 +9,11 @@ class Cafe extends Model
 {
     use HasFactory;
 
+    // Nama tabel di database
     protected $table = 'cafes';
     protected $primaryKey = 'id_cafe';
 
+    // Kolom yang dapat diisi (mass assignable)
     protected $fillable = [
         'nama_cafe',
         'foto_cafe',
@@ -20,18 +22,27 @@ class Cafe extends Model
         'jam_buka',
         'jam_tutup',
         'kecepatan_wifi',
-        'kategori_cafe',
-        'nama_kategori',
+        'kategori_cafe', // Mood atau Agenda
+        'nama_kategori', // Nama mood atau agenda
+        'id_mood',       // ID mood
+        'id_agenda',     // ID agenda
     ];
 
-    public function kategoriMood()
+    /**
+     * Relasi dengan model Mood
+     * (Jika kategori adalah mood)
+     */
+    public function mood()
     {
-        return $this->belongsTo(Mood::class, 'nama_kategori', 'nama_kategori_mood');
+        return $this->belongsTo(Mood::class, 'id_mood', 'id_mood');
     }
 
-    public function kategoriAgenda()
+    /**
+     * Relasi dengan model Agenda
+     * (Jika kategori adalah agenda)
+     */
+    public function agenda()
     {
-        return $this->belongsTo(Agenda::class, 'nama_kategori', 'nama_kategori_agenda');
+        return $this->belongsTo(Agenda::class, 'id_agenda', 'id_agenda');
     }
 }
-

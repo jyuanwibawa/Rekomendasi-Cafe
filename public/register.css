@@ -86,23 +86,9 @@ button:hover {
     text-decoration: underline;
 }
 
-/* Styling for error messages */
 .error-message {
     color: red;
     font-size: 0.9em;
-    margin-top: 10px;
+    margin-top: 5px;
     text-align: left;
-}
-
-.error-message ul {
-    list-style-type: none;
-    padding-left: 0;
-}
-
-.error-message li {
-    margin-bottom: 5px;
-    padding: 5px;
-    background-color: #f8d7da; /* Light red background */
-    border: 1px solid #f5c6cb; /* Border matching the error message color */
-    border-radius: 5px;
 }

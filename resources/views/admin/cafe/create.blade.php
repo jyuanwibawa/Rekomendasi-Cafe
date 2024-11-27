@@ -1,6 +1,3 @@
-
-
-
 <h1>Tambah Cafe</h1>
 
 <form action="{{ route('admin.cafes.store') }}" method="POST" enctype="multipart/form-data">
@@ -37,12 +34,12 @@
     <select name="nama_kategori" id="nama_kategori" required>
         <option value="">-- Pilih Nama Kategori --</option>
         @foreach($moods as $mood)
-            <option value="{{ $mood->nama_kategori_mood }}" {{ old('nama_kategori') === $mood->nama_kategori_mood ? 'selected' : '' }}>
+            <option value="{{ $mood->nama_kategori_mood }}" {{ old('nama_kategori') === $mood->nama_kategori_mood ? 'selected' : '' }} data-id="{{ $mood->id_mood }}">
                 {{ $mood->nama_kategori_mood }}
             </option>
         @endforeach
         @foreach($agendas as $agenda)
-            <option value="{{ $agenda->nama_kategori_agenda }}" {{ old('nama_kategori') === $agenda->nama_kategori_agenda ? 'selected' : '' }}>
+            <option value="{{ $agenda->nama_kategori_agenda }}" {{ old('nama_kategori') === $agenda->nama_kategori_agenda ? 'selected' : '' }} data-id="{{ $agenda->id_agenda }}">
                 {{ $agenda->nama_kategori_agenda }}
             </option>
         @endforeach

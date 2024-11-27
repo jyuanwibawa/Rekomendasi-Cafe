@@ -17,34 +17,34 @@
             @csrf
             <label for="fullname">Nama Lengkap</label>
             <input type="text" id="fullname" name="fullname" placeholder="Nama Lengkap" required>
+            @error('fullname')
+                <div class="error-message">{{ $message }}</div>
+            @enderror
 
             <label for="username">Username</label>
             <input type="text" id="username" name="username" placeholder="Username" required>
+            @error('username')
+                <div class="error-message">{{ $message }}</div>
+            @enderror
 
             <label for="password">Password</label>
             <input type="password" id="password" name="password" placeholder="Password" required>
+            @error('password')
+                <div class="error-message">{{ $message }}</div>
+            @enderror
 
             <label for="password_confirmation">Konfirmasi Password</label>
             <input type="password" id="password_confirmation" name="password_confirmation"
                 placeholder="Konfirmasi Password" required>
+            @error('password_confirmation')
+                <div class="error-message">{{ $message }}</div>
+            @enderror
 
             <button type="submit">Register</button>
         </form>
 
-        <!-- Menampilkan pesan kesalahan jika ada -->
-        @if ($errors->any())
-            <div class="error-message">
-                <ul>
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
-
         <p class="login">Sudah punya akun? <a href="/login">Masuk</a></p>
     </div>
-
 </body>
 
 </html>

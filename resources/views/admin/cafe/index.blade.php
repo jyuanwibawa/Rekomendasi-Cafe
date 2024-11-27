@@ -51,6 +51,12 @@
             color: white;
         }
 
+        .empty-row {
+            text-align: center;
+            font-size: 18px;
+            color: gray;
+        }
+
         .action-buttons {
             display: flex;
             justify-content: center;
@@ -102,6 +108,33 @@
             max-width: 100px;
             height: 80px;
             object-fit: cover;
+            border-radius: 4px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            table th, table td {
+                font-size: 12px;
+                padding: 8px;
+            }
+
+            .btn {
+                font-size: 12px;
+                padding: 6px 8px;
+            }
+
+            .add-button {
+                font-size: 14px;
+                padding: 8px 16px;
+            }
+
+            img {
+                max-width: 80px;
+                height: 60px;
+            }
         }
     </style>
 </head>
@@ -128,29 +161,31 @@
                 </thead>
                 <tbody>
                     @forelse($cafes as $index => $cafe)
-                    <tr>
-                        <td>{{ $index + 1 }}</td>
-                        <td>
-                            {{-- {{ dd(asset('storage/' . $cafe->foto_cafe)) }} --}}
-                            <img src="{{ asset('storage/' . $cafe->foto_cafe) }}">
-                        </td>
-                        
-                        <td>{{ $cafe->nama_cafe }}</td>
-                        <td>{{ $cafe->alamat }}</td>
-                        <td>{{ $cafe->range_harga }}</td>
-                        <td class="action-buttons">
-                            <a href="{{ route('admin.cafes.edit', $cafe->id_cafe) }}" class="btn btn-edit">Edit</a>
-                            <form action="{{ route('admin.cafes.destroy', $cafe->id_cafe) }}" method="POST" style="display: inline;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-delete" onclick="return confirm('Apakah Anda yakin ingin menghapus cafe ini?')">Hapus</button>
-                            </form>
-                        </td>
-                    </tr>
+                        <tr>
+                            <td>{{ $index + 1 }}</td>
+                            <td>
+                                @if($cafe->foto_cafe)
+                                    <img src="{{ asset('storage/' . $cafe->foto_cafe) }}" alt="Foto {{ $cafe->nama_cafe }}">
+                                @else
+                                    <span>Tidak Ada Foto</span>
+                                @endif
+                            </td>
+                            <td>{{ $cafe->nama_cafe }}</td>
+                            <td>{{ $cafe->alamat }}</td>
+                            <td>{{ $cafe->range_harga }}</td>
+                            <td class="action-buttons">
+                                <a href="{{ route('admin.cafes.edit', $cafe->id_cafe) }}" class="btn btn-edit" title="Edit Cafe">Edit</a>
+                                <form action="{{ route('admin.cafes.destroy', $cafe->id_cafe) }}" method="POST" style="display: inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-delete" onclick="return confirm('Apakah Anda yakin ingin menghapus cafe ini?')" title="Hapus Cafe">Hapus</button>
+                                </form>
+                            </td>
+                        </tr>
                     @empty
-                    <tr>
-                        <td colspan="6">Belum ada data cafe.</td>
-                    </tr>
+                        <tr>
+                            <td colspan="6" class="empty-row">Belum ada data cafe.</td>
+                        </tr>
                     @endforelse
                 </tbody>
             </table>
