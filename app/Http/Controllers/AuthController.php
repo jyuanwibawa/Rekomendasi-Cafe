@@ -58,24 +58,24 @@ class AuthController extends Controller
             'username' => 'required|string',
             'password' => 'required|string',
         ]);
-    
+
         $user = User::where('username', $request->username)->first();
-    
+
         Log::info('Login Attempt for Username: ' . $request->username);
-    
+
         if ($user && Hash::check($request->password, $user->password)) {
             session(['user' => $user]);
-    
+
             Log::info('Login berhasil untuk Username: ' . $user->username);
-    
+
             if ($user->role === 'admin') {
                 Log::info('Admin login, mengarahkan ke admin.dashboard');
                 return redirect('/admin-dashboard')->with('success', 'Selamat datang di dashboard admin, ' . $user->fullname);
             }
-    
+
             return redirect('/dashboard')->with('success', 'Selamat datang, ' . $user->fullname);
         }
-    
+
         Log::error('Username atau password salah: ' . $request->username);
         return back()->with('error', 'Username atau password salah.');
     }
@@ -86,6 +86,57 @@ class AuthController extends Controller
         Log::info('User telah logout dan session telah dihapus.');
         return redirect('/login')->with('success', 'Anda berhasil logout.');
     }
-    
 
+    public function profile()
+    {
+        // Ambil data pengguna dari session
+        $user = session('user');
+
+        // Jika tidak ada data pengguna dalam session, arahkan ke login
+        if (!$user) {
+            return redirect()->route('login')->with('error', 'Anda harus login terlebih dahulu.');
+        }
+
+        // Kirim data pengguna ke tampilan
+        return view('auth.profile', compact('user'));
+    }
+    
+    public function updateProfile(Request $request)
+    {
+        // Periksa apakah pengguna sudah login melalui session
+        $user = session('user');
+
+        if (!$user) {
+            return redirect('/login')->with('error', 'Anda perlu login terlebih dahulu.');
+        }
+
+        // Validasi input
+        $request->validate([
+            'fullname' => 'required|string|max:255',
+            'username' => 'required|string|max:255|unique:users,username,' . $user['id'],
+            'password' => 'nullable|string|min:6|confirmed',
+        ]);
+
+        // Periksa apakah password lama valid
+        if ($request->has('old_password') && !empty($request->old_password)) {
+            if (!Hash::check($request->old_password, $user['password'])) {
+                return back()->with('error', 'Password lama salah.');
+            }
+        }
+
+        // Update kolom fullname dan username
+        $user->fullname = $request->input('fullname');
+        $user->username = $request->input('username');
+
+        // Jika password baru disertakan dan valid, hash dan update password
+        if ($request->has('password') && !empty($request->password)) {
+            $user->password = Hash::make($request->password);
+        }
+
+        // Simpan perubahan ke database
+        $user->save();
+
+        // Redirect kembali ke halaman profil dengan pesan sukses
+        return redirect()->route('profile.show')->with('success', 'Profil Anda berhasil diperbarui.');
+    }
 }

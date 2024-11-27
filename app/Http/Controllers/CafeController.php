@@ -25,7 +25,7 @@ class CafeController extends Controller
         return view('admin.cafe.create', compact('moods', 'agendas'));
     }
 
-    
+
     public function edit(Cafe $cafe)
     {
         $moods = Mood::all();
@@ -33,7 +33,7 @@ class CafeController extends Controller
         return view('admin.cafe.edit', compact('cafe', 'moods', 'agendas'));
     }
 
-   
+
     public function store(Request $request)
     {
         // Validasi
@@ -48,11 +48,11 @@ class CafeController extends Controller
             'kategori_cafe' => 'required|string|in:mood,agenda',
             'nama_kategori' => 'nullable|string',
         ]);
-    
+
         // Menangani input kategori dan menyimpan ID mood atau agenda
         $id_mood = null;
         $id_agenda = null;
-        
+
         if ($request->kategori_cafe === 'mood') {
             $mood = Mood::where('nama_kategori_mood', $request->nama_kategori)->first();
             $id_mood = $mood ? $mood->id_mood : null;
@@ -60,7 +60,7 @@ class CafeController extends Controller
             $agenda = Agenda::where('nama_kategori_agenda', $request->nama_kategori)->first();
             $id_agenda = $agenda ? $agenda->id_agenda : null;
         }
-    
+
         // Menyimpan cafe
         $cafe = new Cafe();
         $cafe->nama_cafe = $request->nama_cafe;
@@ -75,10 +75,10 @@ class CafeController extends Controller
         $cafe->id_mood = $id_mood;
         $cafe->id_agenda = $id_agenda;
         $cafe->save();
-    
+
         return redirect()->route('admin.cafes.index')->with('success', 'Cafe berhasil ditambahkan!');
     }
-    
+
     public function update(Request $request, Cafe $cafe)
     {
         $validated = $request->validate([
@@ -91,7 +91,7 @@ class CafeController extends Controller
             'kecepatan_wifi' => 'required|integer',
             'nama_kategori' => 'nullable|string',
         ]);
-    
+
         // Menentukan id_mood atau id_agenda
         $id_kategori = null;
         if ($request->kategori_cafe === 'mood') {
@@ -99,21 +99,21 @@ class CafeController extends Controller
         } elseif ($request->kategori_cafe === 'agenda') {
             $id_kategori = Agenda::where('nama_kategori_agenda', $request->nama_kategori)->first()->id_agenda ?? null;
         }
-    
+
         // Update foto jika ada
         $validated['foto_cafe'] = $this->updateImage($request, 'foto_cafe', 'cafe', $cafe->foto_cafe);
-    
+
         // Update data cafe
         $cafe->update($validated);
-    
+
         // Update kategori
         $cafe->id_mood = $request->kategori_cafe === 'mood' ? $id_kategori : null;
         $cafe->id_agenda = $request->kategori_cafe === 'agenda' ? $id_kategori : null;
         $cafe->save();
-    
+
         return redirect()->route('admin.cafes.index')->with('success', 'Cafe berhasil diperbarui.');
     }
-    
+
     public function destroy(Cafe $cafe)
     {
         // Hapus foto jika ada
@@ -154,4 +154,23 @@ class CafeController extends Controller
             Storage::disk('public')->delete($path);
         }
     }
+
+    public function showMoodCafe()
+    {
+        // Ambil kafe dengan kategori 'mood'
+        $cafes = Cafe::where('kategori_cafe', 'mood')->get();
+
+        // Kirim data ke view 'mood.blade.php'
+        return view('mood', compact('cafes'));
+    }
+
+    public function showActivityCafe()
+    {
+        // Ambil kafe dengan kategori 'agenda' (atau aktivitas)
+        $cafes = Cafe::where('kategori_cafe', 'agenda')->get();
+    
+        // Kirim data ke view yang sesuai
+        return view('agenda', compact('cafes'));
+    }
+    
 }

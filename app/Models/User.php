@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Hash; // Pastikan untuk mengimpor class Hash
+use Illuminate\Support\Facades\Hash;
 
 class User extends Model
 {
@@ -30,12 +30,21 @@ class User extends Model
     // Mutator untuk hashing password sebelum disimpan
     public function setPasswordAttribute($value)
     {
-        $this->attributes['password'] = Hash::make($value); // Gunakan Hash::make untuk enkripsi password yang lebih baik dan aman
+        // Cek apakah password ada dan tidak kosong
+        if (!empty($value)) {
+            $this->attributes['password'] = Hash::make($value); // Gunakan Hash::make untuk enkripsi password yang lebih baik dan aman
+        }
     }
 
     // Mutator untuk men-set role, jika dibutuhkan. Misalnya, set default role sebagai 'user'
     public function setRoleAttribute($value)
     {
         $this->attributes['role'] = $value ?: 'user'; // Default ke 'user'
+    }
+
+    // Validasi password lama untuk pembaruan profil
+    public function validateOldPassword($oldPassword)
+    {
+        return Hash::check($oldPassword, $this->password);
     }
 }

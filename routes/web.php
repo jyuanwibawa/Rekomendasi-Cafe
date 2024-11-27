@@ -13,6 +13,7 @@ use App\Http\Controllers\AgendaController;
 use App\Http\Controllers\CafeController;
 
 
+
 Route::prefix('admin-dashboard')->group(function () {
     Route::resource('cafes', CafeController::class, ['as' => 'admin']);
 });
@@ -36,7 +37,9 @@ Route::get('/login', [AuthController::class, 'index']);
 Route::get('/register', [AuthController::class, 'indexregister']);
 Route::get('/loginadmin', [AuthController::class, 'indexadminlogin']);
 Route::get('/rekomendasi', [UsersController::class, 'indexRecommended'])->name('rekomendasi');
-Route::get('/dashboard', [AuthController::class, 'dashboard'])->name('dashoard');
+
+Route::get('/dashboard', [AuthController::class, 'dashboard'])->name('dashboard');
+
 Route::get('/admin-dashboard', [AuthController::class, 'dashboardadmin'])->name('dashoardadmin');
 
 Route::post('/register', [AuthController::class, 'register'])->name('register');
@@ -44,3 +47,13 @@ Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/loginadmin', [AuthController::class, 'adminLogin'])->name('adminlogin');
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('/dashboard/moodcafe', [CafeController::class, 'showMoodCafe'])->name('dashboard.moodcafe');
+Route::get('/dashboard/agendacafe', [CafeController::class, 'showActivityCafe'])->name('dashboard.activities');
+
+
+
+
+Route::get('/profile', [AuthController::class, 'profile'])->name('profile');
+Route::get('/profile', [AuthController::class, 'profile'])->name('profile.show');
+Route::put('/profile', [AuthController::class, 'updateProfile'])->name('profile.update');
+
