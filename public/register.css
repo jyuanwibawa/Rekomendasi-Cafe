@@ -1,0 +1,108 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body, html {
+    height: 100%;
+    font-family: Arial, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: url('background.jpg') no-repeat center center;
+    background-size: cover;
+}
+
+.register-container {
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 30px;
+    width: 300px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+h2 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+p {
+    color: #555;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 5px;
+    text-align: left;
+}
+
+input[type="text"],
+input[type="password"] {
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+button {
+    padding: 10px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #8b5e34; /* Matching the brown button color */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #704b28; /* Darker shade on hover */
+}
+
+.login {
+    margin-top: 15px;
+    font-size: 14px;
+    color: #333;
+}
+
+.login a {
+    color: #8b5e34;
+    text-decoration: none;
+}
+
+.login a:hover {
+    text-decoration: underline;
+}
+
+/* Styling for error messages */
+.error-message {
+    color: red;
+    font-size: 0.9em;
+    margin-top: 10px;
+    text-align: left;
+}
+
+.error-message ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.error-message li {
+    margin-bottom: 5px;
+    padding: 5px;
+    background-color: #f8d7da; /* Light red background */
+    border: 1px solid #f5c6cb; /* Border matching the error message color */
+    border-radius: 5px;
+}

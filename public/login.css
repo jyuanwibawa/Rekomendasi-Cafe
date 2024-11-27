@@ -1,0 +1,122 @@
+/* Reset and box-sizing for all elements */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Full-screen background with center-aligned form */
+body, html {
+    height: 100%;
+    font-family: Arial, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: url('assets/bg.jpg') no-repeat center center;
+    background-size: cover;
+}
+
+/* Container styling for the login form */
+.login-container {
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 30px;
+    width: 300px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Title and description styling */
+h2 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+p {
+    color: #555;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+/* Form styling */
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Label styling */
+label {
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 5px;
+    text-align: left;
+}
+
+/* Input field styling */
+input[type="text"],
+input[type="password"] {
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    transition: border-color 0.3s ease-in-out; /* Smooth border color transition */
+}
+
+/* Input focus and invalid styling */
+input:focus {
+    border-color: #8b5e34; /* Matching the button color */
+    outline: none; /* Remove default focus outline */
+}
+
+input:invalid {
+    border-color: red; /* Red border for invalid input */
+}
+
+/* Submit button styling */
+button {
+    padding: 10px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #8b5e34; /* Matching the brown button color */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s; /* Add transition for hover */
+}
+
+/* Button hover effect */
+button:hover {
+    background-color: #704b28; /* Darker shade on hover */
+    transform: scale(1.05); /* Slightly enlarge button on hover */
+}
+
+/* Register link styling */
+.register {
+    margin-top: 15px;
+    font-size: 14px;
+    color: #333;
+}
+
+.register a {
+    color: #8b5e34;
+    text-decoration: none;
+}
+
+.register a:hover {
+    text-decoration: underline;
+}
+
+/* Error message styling */
+.error-message {
+    color: red;
+    font-size: 0.9em;
+    margin-top: 5px;
+    text-align: left; /* Align error messages to the left */
+}
+
+/* Styling for the login container background image */
+.login-container {
+    background-color: rgba(255, 255, 255, 0.9); /* Slight transparent white background */
+}

@@ -1,0 +1,103 @@
+/* Reset CSS */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+}
+
+/* Navbar Styling */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #6b4f31;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    height: 60px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    z-index: 1000; /* Pastikan z-index tinggi agar berada di atas sidebar */
+}
+
+.navbar .logo {
+    display: flex;
+    align-items: center;
+}
+
+.navbar .logo img {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+}
+
+.navbar .logout-button {
+    text-decoration: none;
+    font-size: 14px;
+    color: white;
+    padding: 8px 15px;
+    border: 2px solid white;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+}
+
+.navbar .logout-button:hover {
+    background-color: #8c6b4d;
+    color: #fff;
+    border-color: #8c6b4d;
+}
+
+/* Sidebar Styling */
+.sidebar {
+    position: fixed;
+    top: 60px; /* Letakkan di bawah navbar */
+    left: 0;
+    width: 250px;
+    height: calc(100vh - 60px); /* Sisa tinggi layar setelah navbar */
+    background-color: #6b4f31;
+    color: white;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    z-index: 500; /* Pastikan lebih rendah dari navbar */
+}
+
+.sidebar-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.sidebar-header h2 {
+    font-size: 18px;
+    color: white;
+}
+
+.menu-list {
+    list-style: none;
+    padding: 0;
+}
+
+.menu-list li {
+    margin-bottom: 15px;
+}
+
+.menu-list li a {
+    text-decoration: none;
+    color: white;
+    font-size: 16px;
+}
+
+.menu-list li a:hover {
+    color: #f9e3d3;
+}
+
+/* Content Styling */
+.content {
+    margin-left: 270px; /* Geser konten ke kanan agar tidak tertutup sidebar */
+    padding: 80px 20px; /* Tambahkan padding-top untuk memberi ruang bagi navbar */
+}
