@@ -41,7 +41,9 @@
             <li><a href="{{ route('admin.moods.index') }}">Kategori Mood</a></li>
             <li><a href="{{ route('admin.agendas.index') }}">Kategori Agenda</a></li>
             <li><a href="{{ route('admin.cafes.index') }}">Daftar Cafe</a></li>
-            <li><a href="/daftar-user">Daftar User</a></li>
+            <li><a href="{{ route('admin.users.index') }}">Daftar User</a></li>
+
+
         </ul>
     </div>  
 </body>

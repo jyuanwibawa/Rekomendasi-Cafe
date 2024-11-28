@@ -11,7 +11,14 @@ use App\Http\Controllers\MoodController;
 
 use App\Http\Controllers\AgendaController;
 use App\Http\Controllers\CafeController;
+use App\Http\Controllers\UserController;
 
+Route::prefix('admin-dashboard')->group(function () {
+    Route::resource('users', UserController::class, ['as' => 'admin']);
+}); 
+Route::put('/admin-dashboard/users/{user}', [UserController::class, 'update'])->name('admin.users.edit');
+Route::get('/admin-dashboard/users/{user}/edit', [UserController::class, 'edit']);
+Route::get('/admin-dashboard/users/{id}', [UserController::class, 'show'])->name('admin.users.show');
 
 
 Route::prefix('admin-dashboard')->group(function () {

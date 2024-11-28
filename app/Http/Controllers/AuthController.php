@@ -24,6 +24,12 @@ class AuthController extends Controller
 
     public function dashboard()
     {
+        $user = session('user');
+
+        if (!$user) {
+            return redirect()->route('login')->with('error', 'Anda harus login terlebih dahulu.');
+        }
+
         $agendas = Agenda::all();
         $moods = Mood::all();
         $cafes = Cafe::all();
@@ -32,6 +38,16 @@ class AuthController extends Controller
 
     public function dashboardadmin()
     {
+        $user = session('user');
+
+        if (!$user) {
+            return redirect()->route('login')->with('error', 'Anda harus login terlebih dahulu.');
+        }
+
+        if ($user->role !== 'admin') {
+            return redirect()->route('dashboard')->with('error', 'Akses ditolak. Hanya admin yang dapat mengakses halaman ini.');
+        }
+
         return view('admin.dashboard');
     }
 
@@ -46,7 +62,7 @@ class AuthController extends Controller
         $user = User::create([
             'fullname' => $request->fullname,
             'username' => $request->username,
-            'password' => $request->password,
+            'password' => Hash::make($request->password),  // Hash password before storing
         ]);
 
         return redirect('/login')->with('success', 'Akun Anda berhasil dibuat. Silahkan login.');
@@ -61,22 +77,17 @@ class AuthController extends Controller
 
         $user = User::where('username', $request->username)->first();
 
-        Log::info('Login Attempt for Username: ' . $request->username);
-
         if ($user && Hash::check($request->password, $user->password)) {
+            // Set session untuk user
             session(['user' => $user]);
 
-            Log::info('Login berhasil untuk Username: ' . $user->username);
-
             if ($user->role === 'admin') {
-                Log::info('Admin login, mengarahkan ke admin.dashboard');
-                return redirect('/admin-dashboard')->with('success', 'Selamat datang di dashboard admin, ' . $user->fullname);
+                return redirect('/admin-dashboard')->with('success', 'Selamat datang di dashboard admin.');
             }
 
-            return redirect('/dashboard')->with('success', 'Selamat datang, ' . $user->fullname);
+            return redirect('/dashboard')->with('success', 'Selamat datang.');
         }
 
-        Log::error('Username atau password salah: ' . $request->username);
         return back()->with('error', 'Username atau password salah.');
     }
 
@@ -89,21 +100,17 @@ class AuthController extends Controller
 
     public function profile()
     {
-        // Ambil data pengguna dari session
         $user = session('user');
 
-        // Jika tidak ada data pengguna dalam session, arahkan ke login
         if (!$user) {
             return redirect()->route('login')->with('error', 'Anda harus login terlebih dahulu.');
         }
 
-        // Kirim data pengguna ke tampilan
         return view('auth.profile', compact('user'));
     }
-    
+
     public function updateProfile(Request $request)
     {
-        // Periksa apakah pengguna sudah login melalui session
         $user = session('user');
 
         if (!$user) {
@@ -139,4 +146,6 @@ class AuthController extends Controller
         // Redirect kembali ke halaman profil dengan pesan sukses
         return redirect()->route('profile.show')->with('success', 'Profil Anda berhasil diperbarui.');
     }
+
+    
 }
